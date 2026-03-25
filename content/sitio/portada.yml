@@ -1,0 +1,24 @@
+categoriasNav:
+  - Nacional
+  - Mundo
+  - Economía
+  - Deportes
+  - Espectáculos
+  - Tecnología
+  - Opinión
+  - Otros
+mostrarEnlaceStudio: true
+nombreSitio: Noticias México
+piePagina: Contenlllllido editable con Nuxt Content y Studio
+portada:
+  mostrarHero: true
+  tituloUltimasNoticias: Últimas noticias
+  limiteUltimas: 8
+  mostrarSeccionesCategoria: true
+  articulosPorSeccion: 4
+  mostrarSidebar: true
+  tituloSidebar: Lo más leído
+  limiteSidebar: 5
+seoDescripcion: Últimas noticias de México y el mundo.
+seoTitulo: Noticias México — Portada
+taglineBar: Últimas noticias

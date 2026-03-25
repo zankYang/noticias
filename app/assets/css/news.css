@@ -1,0 +1,77 @@
+:root {
+  --news-red: #b30000;
+  --news-red-dark: #7a0000;
+  --news-text: #1a1a1a;
+  --news-muted: #5c5c5c;
+  --news-border: #e2e2e2;
+  --news-bg: #fafafa;
+  --news-serif: 'Georgia', 'Times New Roman', serif;
+  --news-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--news-sans);
+  color: var(--news-text);
+  background: #fff;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--news-red);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.news-title-serif {
+  font-family: var(--news-serif);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.news-kicker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--news-red);
+}
+
+.news-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 768px) {
+  .news-container {
+    padding-inline: 1.25rem;
+  }
+}
+
+.news-prose {
+  font-size: 1.05rem;
+}
+
+.news-prose :where(h1, h2, h3) {
+  font-family: var(--news-serif);
+  margin-top: 1.5rem;
+}

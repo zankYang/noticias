@@ -14,7 +14,7 @@ nombreSitio: Noticias México
 piePagina: "Contenido editable con "
 portada:
   mostrarHero: true
-  tituloUltimasNoticias: Últimas noticias de hoy
+  tituloUltimasNoticias: Prueba de texto
   limiteUltimas: 8
   mostrarSeccionesCategoria: true
   articulosPorSeccion: 5

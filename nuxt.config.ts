@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     // Requerido en `nuxt build`; sustituye por tu org/repo real o variables de entorno.
     repository: {
       provider: 'github',
-      owner: 'zank yang',
+      owner: 'zankYang',
       repo: 'noticias',
       branch: 'main'
     }

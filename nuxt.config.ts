@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  vite: {
+    optimizeDeps: {
+      include: []
+    }
+  },
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: ['@nuxt/content', 'nuxt-studio'],
@@ -9,9 +14,9 @@ export default defineNuxtConfig({
     // Requerido en `nuxt build`; sustituye por tu org/repo real o variables de entorno.
     repository: {
       provider: 'github',
-      owner: process.env.STUDIO_GITHUB_OWNER || 'local',
-      repo: process.env.STUDIO_GITHUB_REPO || 'proyecto-noticias',
-      branch: process.env.STUDIO_GITHUB_BRANCH || 'main'
+      owner: 'zank yang',
+      repo: 'noticias',
+      branch: 'main'
     }
   },
   content: {
@@ -23,9 +28,4 @@ export default defineNuxtConfig({
     }
   },
   css: ['~/assets/css/news.css'],
-  vite: {
-    optimizeDeps: {
-      include: []
-    }
-  }
 })

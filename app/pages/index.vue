@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ArticulosCollectionItem } from '@nuxt/content'
 import { fechaParaOrden } from '~/utils/fechaArticulo'
+import { resolverHeroPortada } from '~/utils/heroPortada'
 
 definePageMeta({
   layout: 'default'
@@ -25,24 +26,9 @@ const ordenados = computed(() => [...(articulos.value ?? [])].sort(compareFecha)
 
 const cfg = computed(() => sitio.value.portada)
 
-const portadaBloque = computed(() => {
-  const s = ordenados.value
-  const marcadas = s.filter((a) => a.enPortada).sort(compareFecha)
-  const main = marcadas[0] ?? s[0] ?? null
-  if (!main) return { main: null as ArticulosCollectionItem | null, side: [] as ArticulosCollectionItem[] }
-  const sideFromMarked = marcadas.filter((a) => a.id !== main.id)
-  const rest = s.filter((a) => a.id !== main.id)
-  const merged: ArticulosCollectionItem[] = []
-  const seen = new Set<string>()
-  for (const a of [...sideFromMarked, ...rest]) {
-    if (!seen.has(a.id)) {
-      seen.add(a.id)
-      merged.push(a)
-    }
-  }
-  const side = merged.filter((a) => a.id !== main.id).slice(0, 3)
-  return { main, side }
-})
+const portadaBloque = computed(() =>
+  resolverHeroPortada(ordenados.value, cfg.value.hero, compareFecha)
+)
 
 const heroIds = computed(() => {
   const { main, side } = portadaBloque.value
@@ -75,6 +61,24 @@ function articulosPorCategoria(cat: string) {
     .filter((a) => a.categoria === cat)
     .slice(0, cfg.value.articulosPorSeccion)
 }
+
+const sidebarAnchoVar = computed(() => {
+  switch (cfg.value.sidebar.ancho) {
+    case 'estrecho':
+      return '260px'
+    case 'amplio':
+      return '360px'
+    default:
+      return '300px'
+  }
+})
+
+const portadaSplitClass = computed(() => {
+  const c = ['portada-split']
+  if (!cfg.value.mostrarSidebar) c.push('portada-split--full')
+  else if (cfg.value.sidebar.posicion === 'izquierda') c.push('portada-split--sidebar-izq')
+  return c.join(' ')
+})
 </script>
 
 <template>
@@ -83,11 +87,15 @@ function articulosPorCategoria(cat: string) {
       v-if="cfg.mostrarHero"
       :main="portadaBloque.main"
       :side="portadaBloque.side"
+      :titulo="cfg.hero.titulo"
+      :subtitulo="cfg.hero.subtitulo"
+      :variante="cfg.hero.variante"
     />
 
     <div
-      class="portada-split news-container"
-      :class="{ 'portada-split--full': !cfg.mostrarSidebar }"
+      class="news-container"
+      :class="portadaSplitClass"
+      :style="{ '--portada-sidebar-ancho': sidebarAnchoVar }"
     >
       <div class="portada-split__main">
         <section class="bloque">
@@ -114,7 +122,11 @@ function articulosPorCategoria(cat: string) {
       </div>
 
       <div v-if="cfg.mostrarSidebar" class="portada-split__side">
-        <NewsSidebarDestacados :articulos="destacadasSidebar" :titulo="cfg.tituloSidebar" />
+        <NewsSidebarDestacados
+          :articulos="destacadasSidebar"
+          :titulo="cfg.tituloSidebar"
+          :variante="cfg.sidebar.variante"
+        />
       </div>
     </div>
   </div>
@@ -152,12 +164,28 @@ function articulosPorCategoria(cat: string) {
 
 @media (min-width: 960px) {
   .portada-split {
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr var(--portada-sidebar-ancho);
     align-items: start;
+  }
+
+  .portada-split--sidebar-izq {
+    grid-template-columns: var(--portada-sidebar-ancho) 1fr;
+  }
+
+  .portada-split--sidebar-izq .portada-split__main {
+    grid-column: 2;
+  }
+
+  .portada-split--sidebar-izq .portada-split__side {
+    grid-column: 1;
   }
 
   .portada-split--full {
     grid-template-columns: 1fr;
+  }
+
+  .portada-split--full .portada-split__main {
+    grid-column: 1;
   }
 }
 </style>

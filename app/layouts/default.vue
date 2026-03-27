@@ -1,9 +1,11 @@
 <script setup lang="ts">
 const { sitio } = await useSitioPortadaResuelto()
+
+const layoutAnchoClass = computed(() => claseLayoutAnchoSitio(sitio.value.diseno))
 </script>
 
 <template>
-  <div class="layout">
+  <div class="layout" :class="layoutAnchoClass">
     <NewsHeader :sitio="sitio" />
     <main class="layout__main">
       <slot />
@@ -23,9 +25,10 @@ const { sitio } = await useSitioPortadaResuelto()
 }
 
 .layout__footer {
-  border-top: 1px solid var(--news-border);
+  border-top: 2px solid var(--color-secondary);
   padding-block: 1.5rem;
   margin-top: 2rem;
+  background: linear-gradient(180deg, #fff 0%, var(--news-bg) 100%);
 }
 
 .layout__foot-note {

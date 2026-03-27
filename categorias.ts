@@ -5,7 +5,8 @@ export const CATEGORIAS = [
   'Deportes',
   'Espectáculos',
   'Tecnología',
-  'Opinión'
+  'Opinión',
+  'Otros'
 ] as const
 
 export type Categoria = (typeof CATEGORIAS)[number]
@@ -18,5 +19,6 @@ export const CARPETA_POR_CATEGORIA = {
   Deportes: 'deportes',
   Espectáculos: 'espectaculos',
   Tecnología: 'tecnologia',
-  Opinión: 'opinion'
+  Opinión: 'opinion',
+  Otros: 'otros'
 } as const satisfies Record<Categoria, string>

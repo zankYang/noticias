@@ -7,9 +7,9 @@ categoriasNav:
   - Tecnología
   - Opinión
   - Otros
-mostrarEnlaceStudio: true
+mostrarEnlaceStudio: false
 nombreSitio: Noticias México
-piePagina: Contenlllllido editable con Nuxt Content y Studio
+piePagina: "Contenido editable con "
 portada:
   mostrarHero: true
   tituloUltimasNoticias: Últimas noticias
@@ -19,6 +19,17 @@ portada:
   mostrarSidebar: true
   tituloSidebar: Lo más leído
   limiteSidebar: 5
+  hero:
+    titulo: Prueba
+    variante: invertida
+    limiteSecundarias: 3
+    secundariosPaths: []
+  sidebar:
+    posicion: izquierda
+    ancho: amplio
+    variante: numerada
 seoDescripcion: Últimas noticias de México y el mundo.
 seoTitulo: Noticias México — Portada
 taglineBar: Últimas noticias
+diseno:
+  anchoContenido: normal

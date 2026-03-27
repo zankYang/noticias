@@ -1,12 +1,25 @@
 :root {
-  --news-red: #b30000;
-  --news-red-dark: #7a0000;
+  /* Paleta Tulcingo Conecta: primario naranja, secundario azul marino */
+  --color-primary: #f58220;
+  --color-primary-hover: #d46d12;
+  --color-secondary: #001529;
+  --color-secondary-soft: #0a2540;
+
+  /* Alias usados en componentes existentes */
+  --news-red: var(--color-primary);
+  --news-red-dark: var(--color-primary-hover);
+
   --news-text: #1a1a1a;
   --news-muted: #5c5c5c;
   --news-border: #e2e2e2;
-  --news-bg: #fafafa;
+  --news-bg: #f6f8fa;
   --news-serif: 'Georgia', 'Times New Roman', serif;
   --news-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Ancho del contenedor editorial (sobrescribible por clase en layout, ver `diseno.anchoContenido`) */
+  --news-container-max: 1200px;
+  /* Columna lateral en portada (la página ajusta con sidebar.ancho) */
+  --portada-sidebar-ancho: 300px;
 }
 
 *,
@@ -29,7 +42,7 @@ a {
 }
 
 a:hover {
-  color: var(--news-red);
+  color: var(--color-primary);
 }
 
 img {
@@ -51,14 +64,27 @@ img {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--news-red);
+  color: var(--color-primary);
 }
 
 .news-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--news-container-max);
   margin-inline: auto;
   padding-inline: 1rem;
+}
+
+/* Modificadores de ancho global (aplicar en `layouts/default.vue` según sitio.diseno) */
+.layout--sitio-estrecho {
+  --news-container-max: 1040px;
+}
+
+.layout--sitio-amplio {
+  --news-container-max: 1320px;
+}
+
+.layout--sitio-maximo {
+  --news-container-max: 1440px;
 }
 
 @media (min-width: 768px) {

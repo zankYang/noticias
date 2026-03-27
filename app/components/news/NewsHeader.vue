@@ -40,7 +40,19 @@ function ancla(categoria: string) {
       </div>
     </div>
     <div class="nh__masthead news-container">
-      <NuxtLink to="/" class="nh__logo">{{ site.nombreSitio }}</NuxtLink>
+      <NuxtLink
+        to="/"
+        class="nh__logo"
+        :aria-label="`Ir al inicio — ${site.nombreSitio}`"
+      >
+        <img
+          src="/logo-tulcingo-conecta.png"
+          class="nh__logo-img"
+          alt=""
+          width="320"
+          height="96"
+        />
+      </NuxtLink>
       <NuxtLink
         v-if="site.mostrarEnlaceStudio"
         to="/_studio"
@@ -69,7 +81,7 @@ function ancla(categoria: string) {
 
 <style scoped>
 .nh__bar {
-  background: #111;
+  background: var(--color-secondary);
   color: #f0f0f0;
   font-size: 0.75rem;
 }
@@ -95,14 +107,21 @@ function ancla(categoria: string) {
 }
 
 .nh__logo {
-  font-family: var(--news-serif);
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  flex-shrink: 0;
 }
 
-.nh__logo:hover {
-  color: var(--news-red);
+.nh__logo:hover .nh__logo-img {
+  opacity: 0.9;
+}
+
+.nh__logo-img {
+  height: clamp(2.75rem, 7vw, 3.75rem);
+  width: auto;
+  max-width: min(100%, 20rem);
+  object-fit: contain;
 }
 
 .nh__studio {
@@ -113,12 +132,12 @@ function ancla(categoria: string) {
 }
 
 .nh__studio:hover {
-  border-color: var(--news-red);
-  color: var(--news-red);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .nh__nav {
-  border-top: 3px solid var(--news-red);
+  border-top: 3px solid var(--color-primary);
   border-bottom: 1px solid var(--news-border);
   background: var(--news-bg);
 }
@@ -133,7 +152,7 @@ function ancla(categoria: string) {
 }
 
 .nh__nav-link--home {
-  color: var(--news-red);
+  color: var(--color-primary);
 }
 
 .nh__nav-link {
@@ -141,6 +160,6 @@ function ancla(categoria: string) {
 }
 
 .nh__nav-link:hover {
-  color: var(--news-red-dark);
+  color: var(--color-primary-hover);
 }
 </style>

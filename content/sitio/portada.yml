@@ -14,7 +14,7 @@ nombreSitio: Noticias México
 piePagina: "Contenido editable con "
 portada:
   mostrarHero: true
-  tituloUltimasNoticias: Últimas noticias
+  tituloUltimasNoticias: Últimas noticias de hoy
   limiteUltimas: 8
   mostrarSeccionesCategoria: true
   articulosPorSeccion: 5
@@ -22,7 +22,7 @@ portada:
   tituloSidebar: Lo más leído
   limiteSidebar: 5
   hero:
-    titulo: Lo mas relevante
+    titulo: Lo mas relevante de hoy
     variante: mosaico
     limiteSecundarias: "2"
     secundariosPaths: []

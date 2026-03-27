@@ -64,6 +64,46 @@ useSeoMeta({
         <dd>{{ sitio.portada.mostrarSeccionesCategoria ? 'Sí' : 'No' }}</dd>
         <dt>Artículos por sección</dt>
         <dd>{{ sitio.portada.articulosPorSeccion }}</dd>
+        <dt>Secciones · variante de rejilla</dt>
+        <dd>{{ sitio.portada.secciones.varianteGrid }}</dd>
+        <dt>Secciones · columnas escritorio (forzado)</dt>
+        <dd>{{ sitio.portada.secciones.columnasEscritorio ?? '— (automático por variante)' }}</dd>
+        <dt>Secciones · prefijo / sufijo de título</dt>
+        <dd>
+ «{{ sitio.portada.secciones.tituloPrefijo }}» … «{{ sitio.portada.secciones.tituloSufijo }}»
+        </dd>
+        <dt>Secciones · variante de tarjeta</dt>
+        <dd>{{ sitio.portada.secciones.varianteTarjeta }}</dd>
+        <dt>Secciones · orden categorías</dt>
+        <dd>
+          <template v-if="sitio.portada.secciones.ordenCategorias?.length">
+            {{ sitio.portada.secciones.ordenCategorias.join(' → ') }}
+          </template>
+          <template v-else>— (igual que el menú)</template>
+        </dd>
+        <dt>Secciones · mostrar título / borde</dt>
+        <dd>
+          {{ sitio.portada.secciones.mostrarTitulo ? 'Título sí' : 'Título no' }} ·
+          {{ sitio.portada.secciones.mostrarBordeTitulo ? 'Borde sí' : 'Borde no' }}
+        </dd>
+        <dt>Secciones · espaciado</dt>
+        <dd>{{ sitio.portada.secciones.espaciado }}</dd>
+        <dt>Secciones · items (override)</dt>
+        <dd>
+          <template v-if="sitio.portada.secciones.items.length">
+            <ul class="cfg__list cfg__list--dense">
+              <li v-for="it in sitio.portada.secciones.items" :key="it.categoria">
+                <strong>{{ it.categoria }}</strong>
+                <template v-if="it.titulo"> · título: {{ it.titulo }}</template>
+                <template v-if="it.limite != null"> · límite: {{ it.limite }}</template>
+                <template v-if="it.oculta"> · oculta</template>
+                <template v-if="it.varianteGrid"> · rejilla: {{ it.varianteGrid }}</template>
+                <template v-if="it.columnasEscritorio"> · cols: {{ it.columnasEscritorio }}</template>
+              </li>
+            </ul>
+          </template>
+          <template v-else>—</template>
+        </dd>
         <dt>Barra lateral</dt>
         <dd>{{ sitio.portada.mostrarSidebar ? 'Sí' : 'No' }}</dd>
         <dt>Sidebar · posición</dt>

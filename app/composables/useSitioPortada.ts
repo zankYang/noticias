@@ -1,4 +1,5 @@
 import { CATEGORIAS } from '../../categorias'
+import { esCategoriaValida } from '~/utils/seccionesPortada'
 
 export const VARIANTES_HERO = [
   'rejilla',
@@ -37,6 +38,33 @@ export interface DisenoSitioConfig {
   anchoContenido: AnchoContenidoSitio
 }
 
+export const VARIANTES_GRID_SECCIONES = ['clasica', 'densa', 'lista', 'destacado'] as const
+export type VarianteGridSecciones = (typeof VARIANTES_GRID_SECCIONES)[number]
+export type EspaciadoSecciones = 'normal' | 'amplio' | 'compacto'
+
+export interface SeccionItemOverride {
+  categoria: string
+  titulo?: string
+  limite?: number
+  oculta?: boolean
+  varianteGrid?: VarianteGridSecciones
+  columnasEscritorio?: 2 | 3 | 4
+}
+
+export interface SeccionesPortadaConfig {
+  varianteGrid: VarianteGridSecciones
+  columnasEscritorio?: 2 | 3 | 4
+  tituloPrefijo: string
+  tituloSufijo: string
+  /** null = mismo orden que categoriasNav */
+  ordenCategorias: string[] | null
+  varianteTarjeta: 'medium' | 'compact'
+  mostrarTitulo: boolean
+  mostrarBordeTitulo: boolean
+  espaciado: EspaciadoSecciones
+  items: SeccionItemOverride[]
+}
+
 export interface SitioPortadaConfig {
   nombreSitio: string
   taglineBar: string
@@ -44,7 +72,7 @@ export interface SitioPortadaConfig {
   piePagina?: string
   seoTitulo: string
   seoDescripcion: string
-  categoriasNav: (typeof CATEGORIAS)[number][]
+  categoriasNav: string[]
   diseno: DisenoSitioConfig
   portada: {
     mostrarHero: boolean
@@ -57,6 +85,7 @@ export interface SitioPortadaConfig {
     limiteSidebar: number
     sidebar: SidebarPortadaConfig
     hero: HeroPortadaConfig
+    secciones: SeccionesPortadaConfig
   }
 }
 
@@ -74,6 +103,91 @@ const sidebarPorDefecto = (): SidebarPortadaConfig => ({
 const disenoPorDefecto = (): DisenoSitioConfig => ({
   anchoContenido: 'normal'
 })
+
+const seccionesPorDefecto = (): SeccionesPortadaConfig => ({
+  varianteGrid: 'clasica',
+  tituloPrefijo: '',
+  tituloSufijo: '',
+  ordenCategorias: null,
+  varianteTarjeta: 'medium',
+  mostrarTitulo: true,
+  mostrarBordeTitulo: true,
+  espaciado: 'normal',
+  items: []
+})
+
+function parseVarianteGridSeccion(v: unknown): VarianteGridSecciones | undefined {
+  return VARIANTES_GRID_SECCIONES.includes(v as VarianteGridSecciones)
+    ? (v as VarianteGridSecciones)
+    : undefined
+}
+
+function parseColumnasSeccion(v: unknown): 2 | 3 | 4 | undefined {
+  return v === 2 || v === 3 || v === 4 ? v : undefined
+}
+
+function normalizeSeccionItems(
+  raw: unknown,
+  previous: SeccionItemOverride[]
+): SeccionItemOverride[] {
+  if (!Array.isArray(raw)) return previous
+  const map = new Map<string, SeccionItemOverride>()
+  for (const p of previous) map.set(p.categoria, { ...p })
+  for (const row of raw) {
+    if (!row || typeof row !== 'object') continue
+    const o = row as Record<string, unknown>
+    if (!esCategoriaValida(o.categoria)) continue
+    const categoria = o.categoria as string
+    const prev = map.get(categoria) ?? { categoria }
+    const limRaw = o.limite
+    const lim =
+      typeof limRaw === 'number' && Number.isFinite(limRaw)
+        ? Math.max(0, Math.min(24, Math.floor(limRaw)))
+        : prev.limite
+    map.set(categoria, {
+      categoria,
+      titulo: typeof o.titulo === 'string' ? o.titulo : prev.titulo,
+      limite: lim,
+      oculta: typeof o.oculta === 'boolean' ? o.oculta : prev.oculta,
+      varianteGrid: parseVarianteGridSeccion(o.varianteGrid) ?? prev.varianteGrid,
+      columnasEscritorio: parseColumnasSeccion(o.columnasEscritorio) ?? prev.columnasEscritorio
+    })
+  }
+  return [...map.values()]
+}
+
+function mergeSecciones(
+  base: SeccionesPortadaConfig,
+  raw: Record<string, unknown> | undefined
+): SeccionesPortadaConfig {
+  if (!raw || typeof raw !== 'object') return base
+  const r = raw as Record<string, unknown>
+  let ordenCategorias = base.ordenCategorias
+  if (Array.isArray(r.ordenCategorias)) {
+    const filtro = r.ordenCategorias.filter(esCategoriaValida) as string[]
+    ordenCategorias = filtro.length ? filtro : null
+  }
+  const esp = r.espaciado
+  const espaciado: EspaciadoSecciones =
+    esp === 'amplio' || esp === 'compacto' || esp === 'normal' ? esp : base.espaciado
+  return {
+    ...base,
+    varianteGrid: parseVarianteGridSeccion(r.varianteGrid) ?? base.varianteGrid,
+    columnasEscritorio: parseColumnasSeccion(r.columnasEscritorio) ?? base.columnasEscritorio,
+    tituloPrefijo: typeof r.tituloPrefijo === 'string' ? r.tituloPrefijo : base.tituloPrefijo,
+    tituloSufijo: typeof r.tituloSufijo === 'string' ? r.tituloSufijo : base.tituloSufijo,
+    ordenCategorias,
+    varianteTarjeta:
+      r.varianteTarjeta === 'compact' || r.varianteTarjeta === 'medium'
+        ? r.varianteTarjeta
+        : base.varianteTarjeta,
+    mostrarTitulo: typeof r.mostrarTitulo === 'boolean' ? r.mostrarTitulo : base.mostrarTitulo,
+    mostrarBordeTitulo:
+      typeof r.mostrarBordeTitulo === 'boolean' ? r.mostrarBordeTitulo : base.mostrarBordeTitulo,
+    espaciado,
+    items: r.items !== undefined ? normalizeSeccionItems(r.items, base.items) : base.items
+  }
+}
 
 export function sitioPortadaPorDefecto(): SitioPortadaConfig {
   return {
@@ -95,7 +209,8 @@ export function sitioPortadaPorDefecto(): SitioPortadaConfig {
       tituloSidebar: 'Lo más leído',
       limiteSidebar: 5,
       sidebar: sidebarPorDefecto(),
-      hero: heroPorDefecto()
+      hero: heroPorDefecto(),
+      secciones: seccionesPorDefecto()
     }
   }
 }
@@ -140,9 +255,11 @@ function mergePortada(
   if (!raw || typeof raw !== 'object') return base
   const heroRaw = raw.hero
   const sidebarRaw = raw.sidebar
-  const { hero: _h, sidebar: _s, ...rest } = raw as Record<string, unknown> & {
+  const seccionesRaw = raw.secciones
+  const { hero: _h, sidebar: _s, secciones: _sec, ...rest } = raw as Record<string, unknown> & {
     hero?: unknown
     sidebar?: unknown
+    secciones?: unknown
   }
   const heroMerged: HeroPortadaConfig = {
     ...base.hero,
@@ -158,6 +275,10 @@ function mergePortada(
   return {
     ...base,
     ...(rest as Partial<SitioPortadaConfig['portada']>),
+    secciones: mergeSecciones(
+      base.secciones,
+      seccionesRaw as Record<string, unknown> | undefined
+    ),
     sidebar: mergeSidebar(base.sidebar, sidebarRaw as Record<string, unknown> | undefined),
     hero: heroMerged
   }
@@ -170,7 +291,7 @@ export function mergeSitioPortada(raw: unknown): SitioPortadaConfig {
   const pr = r.portada as Record<string, unknown> | undefined
   const nav = r.categoriasNav
   const categoriasNav =
-    Array.isArray(nav) && nav.length > 0 ? (nav as SitioPortadaConfig['categoriasNav']) : d.categoriasNav
+    Array.isArray(nav) && nav.length > 0 ? (nav as string[]) : d.categoriasNav
   const diseno = mergeDiseno(d.diseno, r.diseno as Record<string, unknown> | undefined)
   return {
     ...d,

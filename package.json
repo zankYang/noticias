@@ -10,10 +10,12 @@
   },
   "scripts": {
     "build": "nuxt build",
+    "predev": "node scripts/sync-opciones-categorias.mjs",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "node scripts/patch-nuxt-content-preview.mjs && nuxt prepare"
+    "sync:categorias": "node scripts/sync-opciones-categorias.mjs",
+    "postinstall": "node scripts/patch-nuxt-content-preview.mjs && node scripts/sync-opciones-categorias.mjs && nuxt prepare"
   },
   "dependencies": {
     "@nuxt/content": "^3.12.0",

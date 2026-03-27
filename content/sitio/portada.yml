@@ -7,6 +7,8 @@ categoriasNav:
   - Tecnología
   - Opinión
   - Otros
+diseno:
+  anchoContenido: amplio
 mostrarEnlaceStudio: false
 nombreSitio: Noticias México
 piePagina: "Contenido editable con "
@@ -15,21 +17,27 @@ portada:
   tituloUltimasNoticias: Últimas noticias
   limiteUltimas: 8
   mostrarSeccionesCategoria: true
-  articulosPorSeccion: 4
+  articulosPorSeccion: 5
   mostrarSidebar: true
   tituloSidebar: Lo más leído
   limiteSidebar: 5
   hero:
-    titulo: Prueba
-    variante: invertida
-    limiteSecundarias: 3
+    titulo: Lo mas relevante
+    variante: mosaico
+    limiteSecundarias: "2"
     secundariosPaths: []
   sidebar:
-    posicion: izquierda
-    ancho: amplio
+    posicion: derecha
+    ancho: estrecho
     variante: numerada
+  secciones:
+    items: []
+    ordenCategorias: []
+    varianteGrid: clasica
+    columnasEscritorio: 3
+    mostrarTitulo: true
+    mostrarBordeTitulo: true
+    espaciado: amplio
 seoDescripcion: Últimas noticias de México y el mundo.
 seoTitulo: Noticias México — Portada
 taglineBar: Últimas noticias
-diseno:
-  anchoContenido: normal

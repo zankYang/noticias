@@ -5,12 +5,18 @@ import { sitioPortadaPorDefecto } from '~/composables/useSitioPortada'
 
 const props = defineProps<{
   sitio?: SitioPortadaConfig | null
+  categorias?: string[]
 }>()
 
 const site = computed(() => {
   const raw = toValue(props.sitio)
   if (raw && typeof raw === 'object' && 'taglineBar' in raw) return raw
   return sitioPortadaPorDefecto()
+})
+
+const categoriasNav = computed(() => {
+  if (props.categorias?.length) return props.categorias
+  return site.value.categoriasNav
 })
 
 const fechaActual = computed(() =>
@@ -67,7 +73,7 @@ function ancla(categoria: string) {
       <div class="news-container nh__nav-inner">
         <NuxtLink to="/" class="nh__nav-link nh__nav-link--home"> Inicio </NuxtLink>
         <a
-          v-for="c in site.categoriasNav"
+          v-for="c in categoriasNav"
           :key="c"
           :href="ancla(c)"
           class="nh__nav-link"

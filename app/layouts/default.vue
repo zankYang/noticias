@@ -1,12 +1,20 @@
 <script setup lang="ts">
+import { categoriasDesdeArticulos } from '~/utils/seccionesPortada'
+
 const { sitio } = await useSitioPortadaResuelto()
+const { data: articulosNav } = await useAsyncData('header-articulos-nav', () =>
+  queryCollection('articulos').all()
+)
+const categoriasNav = computed(() =>
+  categoriasDesdeArticulos(articulosNav.value ?? []).map((c) => c.label)
+)
 
 const layoutAnchoClass = computed(() => claseLayoutAnchoSitio(sitio.value.diseno))
 </script>
 
 <template>
   <div class="layout" :class="layoutAnchoClass">
-    <NewsHeader :sitio="sitio" />
+    <NewsHeader :sitio="sitio" :categorias="categoriasNav" />
     <main class="layout__main">
       <slot />
     </main>

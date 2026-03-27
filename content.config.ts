@@ -1,9 +1,13 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-import { CATEGORIAS } from './categorias'
+import { OPCIONES_CATEGORIA_STUDIO } from './categorias.opciones.generated'
 
-const categoriaZ = z.enum(
-  CATEGORIAS as unknown as [typeof CATEGORIAS[number], ...typeof CATEGORIAS[number][]]
-)
+/** Select en Studio: valores generados desde carpetas en `content/articulos/` (`pnpm sync:categorias`). */
+const OPCIONES_CATEGORIA_TUPLE = OPCIONES_CATEGORIA_STUDIO as unknown as [
+  string,
+  ...string[]
+]
+
+const categoriaZ = z.enum(OPCIONES_CATEGORIA_TUPLE)
 
 const variantesHero = [
   'rejilla',
@@ -35,6 +39,33 @@ const sidebarPortadaSchema = z.object({
   variante: z.enum(['numerada', 'tarjetas', 'minimal']).default('numerada')
 })
 
+const variantesGridSeccion = ['clasica', 'densa', 'lista', 'destacado'] as const
+const columnasSeccionZ = z.union([z.literal(2), z.literal(3), z.literal(4)])
+
+const seccionItemOverrideSchema = z.object({
+  categoria: categoriaZ,
+  titulo: z.string().optional(),
+  limite: z.number().int().min(0).max(24).optional(),
+  oculta: z.boolean().optional(),
+  varianteGrid: z.enum(variantesGridSeccion).optional(),
+  columnasEscritorio: columnasSeccionZ.optional()
+})
+
+const seccionesPortadaSchema = z.object({
+  varianteGrid: z.enum(variantesGridSeccion).default('clasica'),
+  /** Si se define (2–4), fuerza columnas en escritorio; si no, depende de varianteGrid. */
+  columnasEscritorio: columnasSeccionZ.optional(),
+  tituloPrefijo: z.string().default(''),
+  tituloSufijo: z.string().default(''),
+  /** Orden de bloques; se cruza con categoriasNav (las que no aparezcan van después). */
+  ordenCategorias: z.array(categoriaZ).optional(),
+  varianteTarjeta: z.enum(['medium', 'compact']).default('medium'),
+  mostrarTitulo: z.boolean().default(true),
+  mostrarBordeTitulo: z.boolean().default(true),
+  espaciado: z.enum(['normal', 'amplio', 'compacto']).default('normal'),
+  items: z.array(seccionItemOverrideSchema).optional()
+})
+
 const portadaBloque = z.object({
   mostrarHero: z.boolean().default(true),
   tituloUltimasNoticias: z.string().default('Últimas noticias'),
@@ -45,7 +76,8 @@ const portadaBloque = z.object({
   tituloSidebar: z.string().default('Lo más leído'),
   limiteSidebar: z.number().default(5),
   hero: heroPortadaSchema.optional(),
-  sidebar: sidebarPortadaSchema.optional()
+  sidebar: sidebarPortadaSchema.optional(),
+  secciones: seccionesPortadaSchema.optional()
 })
 
 const disenoSitioSchema = z.object({

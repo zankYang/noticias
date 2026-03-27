@@ -3,9 +3,6 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: ['@nuxt/content', 'nuxt-studio'],
-  content: {
-    experimental: { sqliteConnector: 'native' },
-  },
   studio: {
     // En `pnpm dev`, Studio escribe en el disco vía Git; hace falta al menos un commit en el repo.
     route: '/_studio',
@@ -20,6 +17,9 @@ export default defineNuxtConfig({
   content: {
     preview: {
       api: 'https://api.nuxt.studio'
+    },
+    experimental: {
+      sqliteConnector: 'native'
     }
   },
   css: ['~/assets/css/news.css'],

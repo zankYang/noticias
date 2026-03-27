@@ -19,7 +19,7 @@ portada:
   mostrarSeccionesCategoria: true
   articulosPorSeccion: 5
   mostrarSidebar: true
-  tituloSidebar: Lo más leído
+  tituloSidebar: Lo más leído de la semana
   limiteSidebar: 5
   hero:
     titulo: Lo mas relevante de hoy

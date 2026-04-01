@@ -1,5 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      cloudinaryCloudName: process.env.NUXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? '',
+      cloudinaryAnalytics: process.env.NUXT_PUBLIC_CLOUDINARY_ANALYTICS ?? '',
+      cloudinaryPublicId: process.env.NUXT_PUBLIC_CLOUDINARY_PUBLIC_ID ?? ''
+    }
+  },
   vite: {
     optimizeDeps: {
       include: []

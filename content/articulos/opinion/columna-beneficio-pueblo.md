@@ -4,7 +4,7 @@ description: Reflexión sobre prioridades legislativas y presupuesto social.
 fecha: '2026-03-17'
 categoria: Opinión
 autor: Juan Luis González Alcántara
-imagen: https://picsum.photos/seed/columna1/960/540
+imagen: imagen-pruebas
 destacada: false
 enPortada: false
 ---

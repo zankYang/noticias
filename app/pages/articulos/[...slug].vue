@@ -17,6 +17,20 @@ if (!doc.value) {
   throw createError({ statusCode: 404, statusMessage: 'Artículo no encontrado' })
 }
 
+const heroSize = { width: 960, height: 540 }
+
+const imagenHeroOpts = computed(() => ({
+  gravity: doc.value?.imagenGravedad === 'face' ? ('face' as const) : ('auto' as const)
+}))
+
+const imagenHeroSrc = useCloudinaryArticleImage(
+  () => doc.value?.imagen,
+  heroSize,
+  imagenHeroOpts
+)
+
+const autorAvatarSrc = useCloudinaryAutorAvatar(() => doc.value?.autorImagen)
+
 useSeoMeta({
   title: doc.value.title,
   description: doc.value.description
@@ -34,9 +48,25 @@ useSeoMeta({
       {{ doc.categoria }}<template v-if="doc.seccion"> · {{ doc.seccion }}</template>
     </p>
     <h1 class="news-title-serif article-page__title">{{ doc.title }}</h1>
-    <p class="article-page__meta">{{ doc.autor }} · {{ formatearFechaLarga(doc.fecha) }}</p>
-    <figure v-if="doc.imagen" class="article-page__hero">
-      <img :src="doc.imagen" :alt="doc.title" width="960" height="540" />
+    <p class="article-page__meta">
+      <span v-if="doc.autorImagen && autorAvatarSrc" class="article-page__autor-avatar">
+        <img
+          :src="autorAvatarSrc"
+          :alt="`Retrato de ${doc.autor}`"
+          width="40"
+          height="40"
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
+      <span class="article-page__meta-line">{{ doc.autor }} · {{ formatearFechaLarga(doc.fecha) }}</span>
+    </p>
+    <figure
+      v-if="doc.imagen"
+      class="article-page__hero"
+      :class="{ 'article-page__hero--redondeada': doc.imagenRedondeada }"
+    >
+      <img :src="imagenHeroSrc" :alt="doc.title" :width="heroSize.width" :height="heroSize.height" />
     </figure>
     <p v-if="doc.description" class="article-page__lead">{{ doc.description }}</p>
     <ContentRenderer :value="doc" class="news-prose article-page__body" />
@@ -61,9 +91,28 @@ useSeoMeta({
 }
 
 .article-page__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   color: var(--news-muted);
   font-size: 0.9rem;
   margin: 0 0 1.25rem;
+}
+
+.article-page__autor-avatar {
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.article-page__autor-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.article-page__meta-line {
+  min-width: 0;
 }
 
 .article-page__hero {
@@ -73,6 +122,10 @@ useSeoMeta({
 .article-page__hero img {
   width: 100%;
   border-radius: 2px;
+}
+
+.article-page__hero--redondeada img {
+  border-radius: 12px;
 }
 
 .article-page__lead {

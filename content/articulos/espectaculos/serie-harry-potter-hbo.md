@@ -4,7 +4,7 @@ description: La plataforma publicó imágenes promocionales y sinopsis parcial d
 fecha: '2026-03-19'
 categoria: Espectáculos
 autor: Andrea Acosta Luna
-imagen: https://picsum.photos/seed/harry/960/540
+imagen: imagen-pruebas
 destacada: false
 enPortada: false
 ---

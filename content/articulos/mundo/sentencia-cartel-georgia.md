@@ -4,7 +4,7 @@ description: El caso federal destacó la coordinación entre autoridades de ambo
 fecha: '2026-03-22'
 categoria: Mundo
 autor: José Guadalupe Favela
-imagen: https://picsum.photos/seed/juicio/960/540
+imagen: imagen-pruebas
 destacada: true
 enPortada: false
 ---

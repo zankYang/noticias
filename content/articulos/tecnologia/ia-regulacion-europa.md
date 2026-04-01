@@ -6,7 +6,7 @@ description: Parlamentos discuten límites al despliegue de modelos en sectores 
 destacada: true
 enPortada: false
 fecha: 2026-03-18
-imagen: https://picsum.photos/seed/ai/960/540
+imagen: imagen-pruebas
 ---
 
 Expertos advierten sobre **sesgos** y transparencia algorítmica. La industria pide marcos que no ahoguen la innovación regional.

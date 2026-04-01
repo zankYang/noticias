@@ -1,12 +1,18 @@
 ---
-title: EU entrega a Irán plan de 15 puntos para cese al fuego
+title: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 autor: Redacción
+autorImagen: prueba-1
 categoria: Mundo
-description: La propuesta contempla una pausa humanitaria en la región y canales diplomáticos paralelos.
+description: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 destacada: true
 enPortada: true
 fecha: 2026-03-23
-imagen: https://picsum.photos/seed/iran/960/540
+imagen: imagen-pruebas
+imagenGravedad: auto
+imagenRedondeada: false
+seo:
+  title: EU entrega a Irán plan de 15 puntos para cese al fuego
+  description: La propuesta contempla una pausa humanitaria en la región y canales diplomáticos paralelos.
 ---
 
 Diplomáticos describieron el documento como un **borrador inicial** sujeto a negociación. Organismos internacionales pidieron garantías de supervisión en zona de conflicto.

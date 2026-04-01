@@ -1,4 +1,3 @@
-import { CATEGORIAS } from '../../categorias'
 import { esCategoriaValida } from '~/utils/seccionesPortada'
 
 export const VARIANTES_HERO = [
@@ -8,7 +7,11 @@ export const VARIANTES_HERO = [
   'invertida',
   'mosaico',
   'cinta',
-  'editorial'
+  'editorial',
+  'ajustado',
+  'laterales',
+  /** Una columna ancha + dos notas apiladas; fotos a pegar con degradado y titular encima (tipo portal). */
+  'triada'
 ] as const
 
 export type VarianteHero = (typeof VARIANTES_HERO)[number]
@@ -18,8 +21,14 @@ export interface HeroPortadaConfig {
   subtitulo?: string
   limiteSecundarias: number
   variante: VarianteHero
-  principalPath?: string
-  secundariosPaths?: string[]
+  principalIdentificador?: string
+  secundariosIdentificadores?: string[]
+  /** Variante `ajustado`: proporción `fr` columna principal (p. ej. 1.65). */
+  ajustadoColumnaPrincipal?: number
+  /** Variante `ajustado`: proporción `fr` columna secundarias (p. ej. 1). */
+  ajustadoColumnaSecundarias?: number
+  /** Variante `ajustado`: hueco entre columnas en `rem`. */
+  ajustadoSeparacionRem?: number
 }
 
 export type SidebarPosicion = 'derecha' | 'izquierda'
@@ -56,7 +65,7 @@ export interface SeccionesPortadaConfig {
   columnasEscritorio?: 2 | 3 | 4
   tituloPrefijo: string
   tituloSufijo: string
-  /** null = mismo orden que categoriasNav */
+  /** null = mismo orden que las categorías detectadas en artículos */
   ordenCategorias: string[] | null
   varianteTarjeta: 'medium' | 'compact'
   mostrarTitulo: boolean
@@ -65,16 +74,22 @@ export interface SeccionesPortadaConfig {
   items: SeccionItemOverride[]
 }
 
+export interface PortadaBannerConfig {
+  imagen?: string
+  alt?: string
+  /** Ruta interna (/...) o URL absoluta; si falta, la imagen no es clicable. */
+  enlace?: string
+}
+
 export interface SitioPortadaConfig {
   nombreSitio: string
   taglineBar: string
-  mostrarEnlaceStudio: boolean
   piePagina?: string
   seoTitulo: string
   seoDescripcion: string
-  categoriasNav: string[]
   diseno: DisenoSitioConfig
   portada: {
+    banner?: PortadaBannerConfig
     mostrarHero: boolean
     tituloUltimasNoticias: string
     limiteUltimas: number
@@ -193,13 +208,12 @@ export function sitioPortadaPorDefecto(): SitioPortadaConfig {
   return {
     nombreSitio: 'Noticias México',
     taglineBar: 'Últimas noticias',
-    mostrarEnlaceStudio: true,
     piePagina: 'Contenido editable con Nuxt Content y Studio',
     seoTitulo: 'Noticias México — Portada',
     seoDescripcion: 'Últimas noticias de México y el mundo.',
-    categoriasNav: [...CATEGORIAS],
     diseno: disenoPorDefecto(),
     portada: {
+      banner: undefined,
       mostrarHero: true,
       tituloUltimasNoticias: 'Últimas noticias',
       limiteUltimas: 8,
@@ -232,6 +246,28 @@ function mergeSidebar(
   return { posicion: pos, ancho, variante }
 }
 
+function mergeBanner(
+  base: PortadaBannerConfig | undefined,
+  raw: unknown
+): PortadaBannerConfig | undefined {
+  if (!raw || typeof raw !== 'object') {
+    return base?.imagen?.trim() ? { ...base } : undefined
+  }
+  const r = raw as Record<string, unknown>
+  const out: PortadaBannerConfig = {
+    imagen:
+      typeof r.imagen === 'string'
+        ? r.imagen
+        : typeof base?.imagen === 'string'
+          ? base.imagen
+          : undefined,
+    alt: typeof r.alt === 'string' ? r.alt : base?.alt,
+    enlace: typeof r.enlace === 'string' ? r.enlace : base?.enlace
+  }
+  if (!out.imagen?.trim()) return undefined
+  return out
+}
+
 function mergeDiseno(
   base: DisenoSitioConfig,
   raw: Record<string, unknown> | undefined
@@ -256,10 +292,15 @@ function mergePortada(
   const heroRaw = raw.hero
   const sidebarRaw = raw.sidebar
   const seccionesRaw = raw.secciones
-  const { hero: _h, sidebar: _s, secciones: _sec, ...rest } = raw as Record<string, unknown> & {
+  const bannerRaw = raw.banner
+  const { hero: _h, sidebar: _s, secciones: _sec, banner: _ban, ...rest } = raw as Record<
+    string,
+    unknown
+  > & {
     hero?: unknown
     sidebar?: unknown
     secciones?: unknown
+    banner?: unknown
   }
   const heroMerged: HeroPortadaConfig = {
     ...base.hero,
@@ -275,6 +316,7 @@ function mergePortada(
   return {
     ...base,
     ...(rest as Partial<SitioPortadaConfig['portada']>),
+    banner: mergeBanner(base.banner, bannerRaw),
     secciones: mergeSecciones(
       base.secciones,
       seccionesRaw as Record<string, unknown> | undefined
@@ -289,14 +331,10 @@ export function mergeSitioPortada(raw: unknown): SitioPortadaConfig {
   if (!raw || typeof raw !== 'object') return d
   const r = raw as Record<string, unknown>
   const pr = r.portada as Record<string, unknown> | undefined
-  const nav = r.categoriasNav
-  const categoriasNav =
-    Array.isArray(nav) && nav.length > 0 ? (nav as string[]) : d.categoriasNav
   const diseno = mergeDiseno(d.diseno, r.diseno as Record<string, unknown> | undefined)
   return {
     ...d,
     ...r,
-    categoriasNav,
     diseno,
     portada: mergePortada(d.portada, pr)
   } as SitioPortadaConfig

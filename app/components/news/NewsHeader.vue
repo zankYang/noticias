@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, toValue } from 'vue'
+import { CATEGORIAS } from '../../../categorias'
 import type { SitioPortadaConfig } from '~/composables/useSitioPortada'
 import { sitioPortadaPorDefecto } from '~/composables/useSitioPortada'
 
@@ -16,7 +17,7 @@ const site = computed(() => {
 
 const categoriasNav = computed(() => {
   if (props.categorias?.length) return props.categorias
-  return site.value.categoriasNav
+  return [...CATEGORIAS]
 })
 
 const fechaActual = computed(() =>
@@ -59,15 +60,6 @@ function ancla(categoria: string) {
           height="96"
         />
       </NuxtLink>
-      <NuxtLink
-        v-if="site.mostrarEnlaceStudio"
-        to="/_studio"
-        class="nh__studio"
-        target="_blank"
-        rel="noopener"
-      >
-        Studio
-      </NuxtLink>
     </div>
     <nav class="nh__nav" aria-label="Secciones">
       <div class="news-container nh__nav-inner">
@@ -107,7 +99,7 @@ function ancla(categoria: string) {
 .nh__masthead {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding-block: 1rem;
   gap: 1rem;
 }
@@ -128,18 +120,6 @@ function ancla(categoria: string) {
   width: auto;
   max-width: min(100%, 20rem);
   object-fit: contain;
-}
-
-.nh__studio {
-  font-size: 0.8rem;
-  border: 1px solid var(--news-border);
-  padding: 0.35rem 0.65rem;
-  border-radius: 2px;
-}
-
-.nh__studio:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
 }
 
 .nh__nav {

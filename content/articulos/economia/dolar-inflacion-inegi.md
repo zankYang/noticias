@@ -1,12 +1,18 @@
 ---
-title: Dólar avanza tras inflación en México; así cotiza al cierre
-autor: David Galicia Sánchez
+title: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+autor: Lorem impsu
+autorImagen: prueba-1
 categoria: Economía
-description: El tipo de cambio reaccionó al dato quincenal del INEGI.
+description: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 destacada: true
 enPortada: false
 fecha: 2026-03-24
-imagen: https://picsum.photos/seed/dolar/960/540
+imagen: imagen-pruebas
+imagenGravedad: auto
+imagenRedondeada: false
+seo:
+  title: Dólar avanza tras inflación en México; así cotiza al cierre
+  description: El tipo de cambio reaccionó al dato quincenal del INEGI.
 ---
 
 Analistas señalan que **presiones externas** y la posición relativa de tasas influyen en el peso. La volatilidad intradía se mantuvo acotada respecto a sesiones previas.

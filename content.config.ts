@@ -16,7 +16,13 @@ const variantesHero = [
   'invertida',
   'mosaico',
   'cinta',
-  'editorial'
+  'editorial',
+  /** Principal y secundarias en columnas 50/50 en escritorio. */
+  'ajustado',
+  /** Tres columnas: laterales (notas compactas) | centro (principal grande) | laterales. */
+  'laterales',
+  /** Principal alto a la izquierda y dos secundarias apiladas a la derecha; estilo imagen + titular sobre degradado. */
+  'triada'
 ] as const
 
 const heroPortadaSchema = z.object({
@@ -24,10 +30,19 @@ const heroPortadaSchema = z.object({
   subtitulo: z.string().optional(),
   limiteSecundarias: z.number().int().min(0).max(8).default(3),
   variante: z.enum(variantesHero).default('rejilla'),
-  /** Ruta del artículo principal, ej. /articulos/nacional/mi-nota (si falta o no existe, se usa `enPortada` + fecha). */
-  principalPath: z.string().optional(),
-  /** Orden fijo de notas secundarias (misma convención de ruta); se rellenan con automático si faltan cupos. */
-  secundariosPaths: z.array(z.string()).max(8).optional()
+  /** Identificador (`identificadorPortada` del artículo). Si falta o no coincide, se usa `enPortada` + fecha. */
+  principalIdentificador: z.string().optional(),
+  /** Orden fijo de secundarias por el mismo identificador; cupos vacíos se rellenan con la lógica automática. */
+  secundariosIdentificadores: z.array(z.string()).max(8).optional(),
+  /**
+   * Variante `ajustado`: ancho relativo de la columna del artículo principal (`fr` en CSS).
+   * Ej. `1.65` y secundarias `1` ≈ 62% / 38%. Por defecto 1 y 1 (= 50/50).
+   */
+  ajustadoColumnaPrincipal: z.coerce.number().positive().optional(),
+  /** Variante `ajustado`: ancho relativo de la columna de secundarias (`fr`). */
+  ajustadoColumnaSecundarias: z.coerce.number().positive().optional(),
+  /** Variante `ajustado`: separación entre columnas en `rem` (0–4). */
+  ajustadoSeparacionRem: z.coerce.number().min(0).max(4).optional()
 })
 
 const sidebarPortadaSchema = z.object({
@@ -57,7 +72,7 @@ const seccionesPortadaSchema = z.object({
   columnasEscritorio: columnasSeccionZ.optional(),
   tituloPrefijo: z.string().default(''),
   tituloSufijo: z.string().default(''),
-  /** Orden de bloques; se cruza con categoriasNav (las que no aparezcan van después). */
+  /** Orden de bloques; se cruza con categorías detectadas en artículos (las que no aparezcan van después). */
   ordenCategorias: z.array(categoriaZ).optional(),
   varianteTarjeta: z.enum(['medium', 'compact']).default('medium'),
   mostrarTitulo: z.boolean().default(true),
@@ -66,7 +81,18 @@ const seccionesPortadaSchema = z.object({
   items: z.array(seccionItemOverrideSchema).optional()
 })
 
+/** Banner opcional encima del hero (Cloudinary `public_id` o URL en `imagen`). */
+const portadaBannerSchema = z
+  .object({
+    imagen: z.string().optional(),
+    alt: z.string().optional(),
+    enlace: z.string().optional()
+  })
+  .optional()
+
 const portadaBloque = z.object({
+  /** Configuración del banner (encima del bloque hero). */
+  banner: portadaBannerSchema,
   mostrarHero: z.boolean().default(true),
   tituloUltimasNoticias: z.string().default('Últimas noticias'),
   limiteUltimas: z.number().default(8),
@@ -120,9 +146,20 @@ export default defineContentConfig({
         /** Subsección editorial opcional (CDMX, Estados, etc.); no cambia la URL. */
         seccion: z.string().optional(),
         autor: z.string(),
+        /** Public_id Cloudinary o URL; se muestra circular junto al nombre (g_face). */
+        autorImagen: z.string().optional(),
         imagen: z.string().optional(),
+        /** Cloudinary: `face` usa g_face (recorte centrado en rostro), `auto` es g_auto. */
+        imagenGravedad: z.enum(['auto', 'face']).default('auto'),
+        /** Bordes más redondeados en tarjetas y hero del artículo. */
+        imagenRedondeada: z.boolean().default(false),
         destacada: z.boolean().default(false),
         enPortada: z.boolean().default(false),
+        /**
+         * Clave estable para el hero de la portada (`principalIdentificador` / `secundariosIdentificadores` en portada.yml).
+         * Debe ser única entre notas que compartan el hero; si se repite, gana la primera en orden por fecha del sitio.
+         */
+        identificadorPortada: z.string().optional(),
         orden: z.number().optional()
       }),
       indexes: [
@@ -138,11 +175,9 @@ export default defineContentConfig({
       schema: z.object({
         nombreSitio: z.string(),
         taglineBar: z.string().default('Últimas noticias'),
-        mostrarEnlaceStudio: z.boolean().default(true),
         piePagina: z.string().optional(),
         seoTitulo: z.string(),
         seoDescripcion: z.string(),
-        categoriasNav: z.array(categoriaZ).optional(),
         diseno: disenoSitioSchema.optional(),
         portada: portadaBloque
       })

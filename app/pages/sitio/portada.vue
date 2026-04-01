@@ -39,21 +39,34 @@ useSeoMeta({
         <dd>{{ sitio.seoDescripcion }}</dd>
         <dt>Pie de página</dt>
         <dd>{{ sitio.piePagina || '—' }}</dd>
-        <dt>Enlace a Studio</dt>
-        <dd>{{ sitio.mostrarEnlaceStudio ? 'Visible' : 'Oculto' }}</dd>
         <dt>Diseño · ancho del contenido</dt>
         <dd>{{ sitio.diseno.anchoContenido }}</dd>
       </dl>
     </section>
 
     <section class="cfg__block">
-      <h2 class="cfg__h2">Menú y categorías en portada</h2>
-      <p class="cfg__tags">{{ sitio.categoriasNav.join(' · ') }}</p>
+      <h2 class="cfg__h2">Menú por categorías</h2>
+      <p class="cfg__lead">
+        Las entradas del menú superior se generan desde las carpetas de los artículos en
+        <code>content/articulos/</code>. Si aún no hay artículos, se muestra el listado por defecto del
+        código (<code>categorias.ts</code>).
+      </p>
     </section>
 
     <section class="cfg__block">
       <h2 class="cfg__h2">Bloques de la portada</h2>
       <dl class="cfg__dl">
+        <dt>Banner (encima del hero)</dt>
+        <dd>
+          <template v-if="sitio.portada.banner?.imagen">
+            <code>{{ sitio.portada.banner.imagen }}</code>
+            <template v-if="sitio.portada.banner.alt"> — alt: {{ sitio.portada.banner.alt }}</template>
+            <template v-if="sitio.portada.banner.enlace">
+              — enlace: {{ sitio.portada.banner.enlace }}
+            </template>
+          </template>
+          <template v-else>— (sin banner)</template>
+        </dd>
         <dt>Hero</dt>
         <dd>{{ sitio.portada.mostrarHero ? 'Sí' : 'No' }}</dd>
         <dt>Título “últimas”</dt>
@@ -122,15 +135,48 @@ useSeoMeta({
         <dd>{{ sitio.portada.hero.subtitulo || '—' }}</dd>
         <dt>Hero · variante</dt>
         <dd>{{ sitio.portada.hero.variante }}</dd>
+        <template v-if="sitio.portada.hero.variante === 'ajustado'">
+          <dt>Hero · ajustado · columna principal (<code>fr</code>)</dt>
+          <dd>
+            {{
+              sitio.portada.hero.ajustadoColumnaPrincipal ??
+              '1 (predeterminado si no se define)'
+            }}
+          </dd>
+          <dt>Hero · ajustado · columnas secundarias (<code>fr</code>)</dt>
+          <dd>
+            {{
+              sitio.portada.hero.ajustadoColumnaSecundarias ??
+              '1 (predeterminado si no se define)'
+            }}
+          </dd>
+          <dt>Hero · ajustado · separación (rem)</dt>
+          <dd>
+            {{
+              sitio.portada.hero.ajustadoSeparacionRem ??
+              '— (hueco por defecto del grid: 1.25rem)'
+            }}
+          </dd>
+        </template>
         <dt>Hero · límite secundarias</dt>
         <dd>{{ sitio.portada.hero.limiteSecundarias }}</dd>
-        <dt>Hero · artículo principal (ruta)</dt>
-        <dd>{{ sitio.portada.hero.principalPath || '— (automático: enPortada + fecha)' }}</dd>
-        <dt>Hero · secundarias fijas</dt>
+        <dt>Hero · artículo principal (<code>identificadorPortada</code>)</dt>
         <dd>
-          <template v-if="sitio.portada.hero.secundariosPaths?.length">
+          {{
+            sitio.portada.hero.principalIdentificador ||
+            '— (automático: enPortada + fecha)'
+          }}
+        </dd>
+        <dt>Hero · secundarias fijas (identificadores)</dt>
+        <dd>
+          <template v-if="sitio.portada.hero.secundariosIdentificadores?.length">
             <ul class="cfg__list">
-              <li v-for="(p, i) in sitio.portada.hero.secundariosPaths" :key="i">{{ p }}</li>
+              <li
+                v-for="(p, i) in sitio.portada.hero.secundariosIdentificadores"
+                :key="i"
+              >
+                {{ p }}
+              </li>
             </ul>
           </template>
           <template v-else>— (automático)</template>

@@ -1,43 +1,47 @@
-categoriasNav:
-  - Nacional
-  - Mundo
-  - Economía
-  - Deportes
-  - Espectáculos
-  - Tecnología
-  - Opinión
-  - Otros
 diseno:
-  anchoContenido: amplio
-mostrarEnlaceStudio: false
-nombreSitio: Noticias México
-piePagina: "Contenido editable con "
+  anchoContenido: maximo
+nombreSitio: Tulcingo Conecta
+piePagina: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dictum,
 portada:
+  banner:
+    imagen: banner-prueba
+    alt: Cintillo de portada
   mostrarHero: true
-  tituloUltimasNoticias: Prueba de texto
-  limiteUltimas: 8
+  tituloUltimasNoticias: Ultimas Noticas
+  limiteUltimas: 6
   mostrarSeccionesCategoria: true
-  articulosPorSeccion: 5
+  articulosPorSeccion: 6
   mostrarSidebar: true
   tituloSidebar: Lo más leído de la semana
-  limiteSidebar: 5
+  limiteSidebar: 6
   hero:
-    titulo: Lo mas relevante de hoy
-    variante: mosaico
-    limiteSecundarias: "2"
-    secundariosPaths: []
+    titulo: Lorem ipsum dolor sit amet
+    variante: triada
+    limiteSecundarias: "6"
+    secundariosIdentificadores:
+      - ""
+    subtitulo: Lorem ipsum dolor sit amet
+    principalIdentificador: ""
+    ajustadoColumnaPrincipal: 13
+    ajustadoColumnaSecundarias: 10
+    ajustadoSeparacionRem: 20
   sidebar:
     posicion: derecha
-    ancho: estrecho
+    ancho: amplio
     variante: numerada
   secciones:
     items: []
-    ordenCategorias: []
+    ordenCategorias:
+      - Mundo
+      - Economía
     varianteGrid: clasica
-    columnasEscritorio: 3
+    columnasEscritorio: 2
     mostrarTitulo: true
     mostrarBordeTitulo: true
     espaciado: amplio
-seoDescripcion: Últimas noticias de México y el mundo.
-seoTitulo: Noticias México — Portada
-taglineBar: Últimas noticias
+    tituloPrefijo: "Tulcingo - "
+    tituloSufijo: ""
+    varianteTarjeta: compact
+seoDescripcion: Últimas noticias de Tulcingo y México.
+seoTitulo: Tulcingo Conecta - Noticias
+taglineBar: Loremp Impsu

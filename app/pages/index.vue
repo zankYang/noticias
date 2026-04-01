@@ -8,6 +8,7 @@ import {
   carpetaDesdePathArticulo,
   ordenCategoriasParaSecciones
 } from '~/utils/seccionesPortada'
+import { cloudinaryScaleUrl } from '~/utils/cloudinaryDeliveryUrl'
 
 definePageMeta({
   layout: 'default'
@@ -149,10 +150,148 @@ const portadaSplitClass = computed(() => {
   else if (cfg.value.sidebar.posicion === 'izquierda') c.push('portada-split--sidebar-izq')
   return c.join(' ')
 })
+
+const config = useRuntimeConfig()
+
+/** `portada.banner.imagen` o, si falta, `NUXT_PUBLIC_CLOUDINARY_PUBLIC_ID`. */
+const bannerImagenSource = computed(() => {
+  const y = cfg.value.banner?.imagen?.trim() ?? ''
+  if (y) return y
+  return String(config.public.cloudinaryPublicId ?? '').trim()
+})
+
+/** Máximo lógico del cintillo (ref. escritorio); proporción 1440:147. */
+const bannerCloudScale = { width: 1440, height: 147 }
+
+const bannerEsPublicId = computed(() => {
+  const s = bannerImagenSource.value
+  return !!s && !/^https?:\/\//i.test(s)
+})
+
+function bannerUrlCloudinary(ancho: number) {
+  const ratio = bannerCloudScale.height / bannerCloudScale.width
+  const alto = Math.max(1, Math.round(ancho * ratio))
+  return cloudinaryScaleUrl(bannerImagenSource.value, {
+    cloudName: config.public.cloudinaryCloudName as string,
+    width: ancho,
+    height: alto,
+    analytics: (config.public.cloudinaryAnalytics as string) || undefined
+  })
+}
+
+const bannerSrcWidths = [720, 1080, 1440] as const
+
+/** `src` equilibrado; con `srcset` el navegador pide menos en pantallas estrechas. */
+const bannerSrc = computed(() => {
+  const s = bannerImagenSource.value
+  if (!s) return ''
+  if (!bannerEsPublicId.value) return s
+  return bannerUrlCloudinary(1080)
+})
+
+const bannerSrcset = computed(() => {
+  if (!bannerEsPublicId.value || !bannerImagenSource.value) return undefined
+  return bannerSrcWidths.map((w) => `${bannerUrlCloudinary(w)} ${w}w`).join(', ')
+})
+
+const bannerSizes =
+  '(max-width: 768px) calc(100vw - 2rem), min(1440px, calc(100vw - 2.5rem))'
+
+const bannerImgIntrinsic = computed(() => {
+  const s = bannerImagenSource.value
+  if (!s || /^https?:\/\//i.test(s)) return undefined
+  return bannerCloudScale
+})
+
+/** Prioriza el banner en el grafo de recursos (LCP) cuando es Cloudinary. */
+useHead({
+  link: computed(() => {
+    if (!bannerEsPublicId.value || !bannerImagenSource.value || !bannerSrcset.value) return []
+    return [
+      {
+        rel: 'preload' as const,
+        as: 'image' as const,
+        href: bannerUrlCloudinary(1080),
+        imageSrcset: bannerSrcset.value,
+        imageSizes: bannerSizes,
+        fetchpriority: 'high' as const
+      }
+    ]
+  })
+})
+
+const mostrarBannerPortada = computed(
+  () => !!bannerImagenSource.value && !!bannerSrc.value
+)
+
+const bannerEnlace = computed(() => cfg.value.banner?.enlace?.trim() ?? '')
+
+const bannerEnlaceInterno = computed(() => {
+  const e = bannerEnlace.value
+  if (!e || /^https?:\/\//i.test(e)) return ''
+  return e.startsWith('/') ? e : `/${e}`
+})
+
+const bannerEsExterno = computed(() => /^https?:\/\//i.test(bannerEnlace.value))
 </script>
 
 <template>
   <div>
+    <section
+      v-if="mostrarBannerPortada"
+      class="portada-banner news-container"
+      aria-label="Cintillo de portada"
+    >
+      <a
+        v-if="bannerEnlace && bannerEsExterno"
+        :href="bannerEnlace"
+        class="portada-banner__link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          :src="bannerSrc"
+          :srcset="bannerSrcset || undefined"
+          :sizes="bannerSrcset ? bannerSizes : undefined"
+          :alt="cfg.banner?.alt || 'Cintillo'"
+          class="portada-banner__img"
+          :width="bannerImgIntrinsic?.width"
+          :height="bannerImgIntrinsic?.height"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </a>
+      <NuxtLink
+        v-else-if="bannerEnlace && bannerEnlaceInterno"
+        :to="bannerEnlaceInterno"
+        class="portada-banner__link"
+      >
+        <img
+          :src="bannerSrc"
+          :srcset="bannerSrcset || undefined"
+          :sizes="bannerSrcset ? bannerSizes : undefined"
+          :alt="cfg.banner?.alt || 'Cintillo'"
+          class="portada-banner__img"
+          :width="bannerImgIntrinsic?.width"
+          :height="bannerImgIntrinsic?.height"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </NuxtLink>
+      <img
+        v-else
+        :src="bannerSrc"
+        :srcset="bannerSrcset || undefined"
+        :sizes="bannerSrcset ? bannerSizes : undefined"
+        :alt="cfg.banner?.alt || 'Cintillo'"
+        class="portada-banner__img"
+        :width="bannerImgIntrinsic?.width"
+        :height="bannerImgIntrinsic?.height"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </section>
+
     <NewsHero
       v-if="cfg.mostrarHero"
       :main="portadaBloque.main"
@@ -160,6 +299,9 @@ const portadaSplitClass = computed(() => {
       :titulo="cfg.hero.titulo"
       :subtitulo="cfg.hero.subtitulo"
       :variante="cfg.hero.variante"
+      :ajustado-columna-principal="cfg.hero.ajustadoColumnaPrincipal"
+      :ajustado-columna-secundarias="cfg.hero.ajustadoColumnaSecundarias"
+      :ajustado-separacion-rem="cfg.hero.ajustadoSeparacionRem"
     />
 
     <div
@@ -209,6 +351,29 @@ const portadaSplitClass = computed(() => {
 </template>
 
 <style scoped>
+.portada-banner {
+  padding-block: 0.65rem 0;
+}
+
+.portada-banner__link {
+  display: block;
+  line-height: 0;
+  border-radius: 4px;
+}
+
+a.portada-banner__link:hover {
+  opacity: 0.96;
+}
+
+.portada-banner__img {
+  display: block;
+  min-width: 80%;
+  max-width: 100%;
+  max-height: min(28vw, 147px);
+  object-fit: cover;
+  margin-inline: auto;
+}
+
 .bloque {
   padding-block: 1rem;
 }

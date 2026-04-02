@@ -56,8 +56,8 @@ export function categoriasDesdeArticulos(
   const knownOrder = CATEGORIAS.map((c) => CARPETA_POR_CATEGORIA[c])
   return [...map.entries()]
     .sort((a, b) => {
-      const ia = knownOrder.indexOf(a[0])
-      const ib = knownOrder.indexOf(b[0])
+      const ia = knownOrder.indexOf(a[0] as (typeof knownOrder)[number])
+      const ib = knownOrder.indexOf(b[0] as (typeof knownOrder)[number])
       const va = ia === -1 ? 999 : ia
       const vb = ib === -1 ? 999 : ib
       if (va !== vb) return va - vb

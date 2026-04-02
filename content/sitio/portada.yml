@@ -16,7 +16,7 @@ portada:
   limiteSidebar: 6
   hero:
     titulo: Lorem ipsum dolor sit amet
-    variante: triada
+    variante: laterales
     limiteSecundarias: "6"
     secundariosIdentificadores:
       - ""

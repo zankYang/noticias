@@ -20,6 +20,20 @@
   --news-container-max: 1200px;
   /* Columna lateral en portada (la página ajusta con sidebar.ancho) */
   --portada-sidebar-ancho: 300px;
+
+  /* Colores semánticos para alertas y estados */
+  --color-info: #3b82f6;
+  --color-info-bg: #eff6ff;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  --color-danger: #ef4444;
+  --color-danger-bg: #fef2f2;
+  --color-success: #22c55e;
+  --color-success-bg: #f0fdf4;
+
+  /* Spacing para componentes MDC dentro de .news-prose */
+  --mdc-block-spacing: 1.5rem;
+  --mdc-radius: 8px;
 }
 
 *,
@@ -95,9 +109,56 @@ img {
 
 .news-prose {
   font-size: 1.05rem;
+  line-height: 1.7;
 }
 
 .news-prose :where(h1, h2, h3) {
   font-family: var(--news-serif);
   margin-top: 1.5rem;
+}
+
+/* Spacing uniforme entre bloques MDC dentro de artículos */
+.news-prose > * + * {
+  margin-top: var(--mdc-block-spacing);
+}
+
+.news-prose > p + p {
+  margin-top: 0;
+}
+
+/* Transiciones suaves globales para componentes interactivos */
+.news-prose details summary,
+.news-prose [role="tab"],
+.news-prose a {
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+/* Clearfix para figuras flotantes (FiguraConPie izquierda/derecha) */
+.news-prose::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+/* Responsive: evitar overflow horizontal en tablas y embeds */
+.news-prose iframe,
+.news-prose video,
+.news-prose audio {
+  max-width: 100%;
+}
+
+/* Reducir espaciado en mobile */
+@media (max-width: 639px) {
+  .news-prose {
+    font-size: 1rem;
+  }
+}
+
+/* Rompe el ancho de la columna del artículo (full-bleed) para banners y secciones */
+.mdc-full-bleed {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  box-sizing: border-box;
 }
